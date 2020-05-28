@@ -55,7 +55,7 @@ const parse = (countries, cases) => {
                 )
             };
             item.geojson = GeoJson.createGeoJsonForCountry(item)
-            data.push({ ...item, ...getLatest(item) });
+            data.push(item)
         }
     }
     return data;
@@ -143,7 +143,7 @@ const createSeriesData = (series) => {
         totalRecovered = recoveredSeries[recoveredSeries.length - 1][1];
     }
     if (deathSeries.length > 0) {
-        totalDeaths = deathSeries[deathSeries.length - 1][1];   
+        totalDeaths = deathSeries[deathSeries.length - 1][1];
     }
 
     // Create daily time series and latest figures
@@ -327,48 +327,6 @@ const createdSeriesForCountry = (entries, countryCode) => {
     }
 
     return series;
-}
-
-/**
- * Retrieve the latest data for a country - some countries
- * dont report recovery's or fatalities per day so iterate back to retrieve latest figures.
- * 
- * @param {*} country 
- */
-const getLatest = country => {
-    const data = {
-        latestConfirmed: 0,
-        latestRecovered: 0,
-        latestFatalities: 0,
-        latestConfirmedRate: 0,
-        latestRecoveryRate: 0,
-        latestFatalityRate: 0
-    }
-
-    if (country.series.data.length > 0) {
-        for (let i = country.series.data.length - 1; i >= 0; i--) {
-            const item = country.series.data[i];
-            if (!data.latestConfirmed) {
-                data.latestConfirmed = item.confirmed;
-            }
-            if (!data.latestRecovered) {
-                data.latestRecovered = item.recovered;
-            }
-            if (!data.latestFatalities) {
-                data.latestFatalities = item.deaths;
-            }
-            if (data.latestConfirmed && data.latestRecovered && data.latestFatalities) {
-                break;
-            }
-        }
-        data.latestConfirmedRate = (data.latestConfirmed / country.population) * 100;
-        if (data.latestConfirmed) {
-            data.latestRecoveryRate = (data.latestRecovered / data.latestConfirmed) * 100;
-            data.latestFatalityRate = (data.latestFatalities / data.latestConfirmed) * 100;
-        }
-    }
-
-    return data;
 }
 
 module.exports = {
