@@ -69,62 +69,6 @@ const createGeoJsonForCountry = country => {
 }
 
 /**
- * One geoJson for all countries
- * 
- * @param {*} countries
- */
-const createGeoJsonForCountries = countries => {
-    const totalConfirmed = createFeatureCollection();
-    const totalRecovered = createFeatureCollection();
-    const totalDeaths = createFeatureCollection();
-    const latestConfirmed = createFeatureCollection();
-    const latestRecovered = createFeatureCollection();
-    const latestDeaths = createFeatureCollection();
-
-    for (const country of countries) {
-        if (country.series.stats.totalConfirmed > 0) {
-            totalConfirmed.features.push(createFeature(country, {
-                totalConfirmed: country.series.stats.totalConfirmed
-            }))
-        }
-        if (country.series.stats.totalRecovered > 0) {
-            totalRecovered.features.push(createFeature(country, {
-                totalRecovered: country.series.stats.totalRecovered
-            }))
-        }
-        if (country.series.stats.totalDeaths > 0) {
-            totalDeaths.features.push(createFeature(country, {
-                totalDeaths: country.series.stats.totalDeaths
-            }))
-        }
-        if (country.series.stats.latestConfirmed > 0) {
-            latestConfirmed.features.push(createFeature(country, {
-                latestConfirmed: country.series.stats.latestConfirmed
-            }))
-        }
-        if (country.series.stats.latestRecovered > 0) {
-            latestRecovered.features.push(createFeature(country, {
-                latestRecovered: country.series.stats.latestRecovered
-            }))
-        }
-        if (country.series.stats.latestDeaths > 0) {
-            latestDeaths.features.push(createFeature(country, {
-                latestDeaths: country.series.stats.latestDeaths
-            }))
-        }
-    }
-
-    totalConfirmed.features.sort(totalConfirmedSorter)
-    totalRecovered.features.sort(totalRecoveredSorter)
-    totalDeaths.features.sort(totalDeathsSorter)
-    latestConfirmed.features.sort(lastConfirmedSorter)
-    latestRecovered.features.sort(latestRecoveredSorter)
-    latestDeaths.features.sort(latestDeathsSorter)
-
-    return { totalConfirmed, totalRecovered, totalDeaths, latestConfirmed, latestRecovered, latestDeaths };
-}
-
-/**
  * 	Create history for all countries to be used for animation
  * 	Take any confirmed ts - first one and iterate over the dates
  * 	Remove 0 values and split series
@@ -189,6 +133,5 @@ const createGeoJsonHistoryForCountries = countries => {
 
 module.exports = {
     createGeoJsonHistoryForCountries,
-    createGeoJsonForCountries,
     createGeoJsonForCountry
 }
