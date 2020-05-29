@@ -263,7 +263,25 @@ const createdSeriesForCountry = (entries, countryCode) => {
 				};
 				series.provinces.push(province);
 			}
-			province.data.push(stats(entries, i));
+			if (entries[i].City !== "") {
+				let city = province.cities.find(
+					item => item.name === entries[i].City
+				);
+				if (!city) {
+					city = {
+						uuid: Utils.uuid(),
+						name: entries[i].City,
+						lat: entries[i].Lat,
+						lng: entries[i].Lon,
+						data: []
+					};
+					province.cities.push(city);
+				}
+				city.data.push(stats(entries, i));
+			}
+			else {
+				province.data.push(stats(entries, i));
+			}
 		}
 	}
 
@@ -273,6 +291,37 @@ const createdSeriesForCountry = (entries, countryCode) => {
 		for (let j = 0; j < series.provinces.length; j++) {
 			if (series.provinces[j].cities.length > 0) {
 				hasCities = true;
+				series.provinces[j].data = [];
+				for (
+					let z = 0;
+					z < series.provinces[j].cities.length;
+					z++
+				) {
+					for (
+						let x = 0;
+						x < series.provinces[j].cities[z].data.length;
+						x++
+					) {
+						merge(
+							series.provinces[j].data,
+							series.provinces[j].cities[z].data[x]
+						);
+					}
+				}
+			}
+		}
+	}
+
+	if (
+		hasCities ||
+		countryCode === "AU" ||
+		countryCode === "CA" ||
+		countryCode === "CN"
+	) {
+		series.data = [];
+		for (let j = 0; j < series.provinces.length; j++) {
+			for (let x = 0; x < series.provinces[j].data.length; x++) {
+				merge(series.data, series.provinces[j].data[x]);
 			}
 		}
 	}
@@ -294,6 +343,9 @@ const createdSeriesForCountry = (entries, countryCode) => {
 	Object.assign(series, createSeriesData(series.data))
 	for (let province of series.provinces) {
 		Object.assign(province, createSeriesData(province.data))
+		for (let city of province.cities) {
+			Object.assign(city, createSeriesData(city.data))
+		}
 	}
 
 	return series;
