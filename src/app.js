@@ -10,9 +10,9 @@ const app = express()
 const myCache = {}
 
 /**
- * Cron Jobs - should run on the hour
+ * Cron Job - every morning at 2:00 AM
  */
-const jobCoverage = new CronJob('* */2 * * *', function () {
+const jobCoverage = new CronJob('0 2 * * *', function () {
 	console.log(`Running job at ${new Date()}`)
 	jobs.runAll().then(data => {
 		myCache['coverage'] = data
