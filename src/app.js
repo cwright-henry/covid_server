@@ -12,7 +12,7 @@ const myCache = {}
 /**
  * Cron Job - every morning at 2:00 AM
  */
-const jobCoverage = new CronJob('0 2 * * *', function () {
+const jobCoverage = new CronJob('0 5 * * *', function () {
 	console.log(`Running job at ${new Date()}`)
 	jobs.runAll().then(data => {
 		myCache['coverage'] = data
