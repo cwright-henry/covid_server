@@ -11,14 +11,14 @@ const app = express()
 const PORT = 3000;
 
 /**
- * API data
+ * API data - timeout in 10 mins i.e. run for max of 50 mins as job will run on the hour
  */
 const opts = {
 	host: 'api.covid19api.com',
 	path: '/export',
 	port: 443,
 	method: 'GET',
-	timeout: 60000,
+	timeout: 600000,
 	headers: {
 		'accept': 'application/zip'
 	}
