@@ -157,7 +157,7 @@ cronJob.start();
  * Routing
  */
 app.get('/covid/api/export', (req, res) => {
-	const readFileStream = fs.createReadStream(DATA_TMP_FILE);
+	const readFileStream = fs.createReadStream(DATA_FILE);
 	readFileStream.pipe(res);
 	readFileStream.on('close', () => {
 		res.end();
