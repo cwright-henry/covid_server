@@ -1,9 +1,14 @@
 const fs = require('fs');
+const JSZip = require('jszip')
 const https = require('https');
 const express = require('express');
 const CronJob = require('cron').CronJob;
-const PORT = 3000;
 const app = express()
+
+/**
+ * Port to rum on
+ */
+const PORT = 3000;
 
 /**
  * API data
@@ -13,7 +18,7 @@ const opts = {
 	path: '/export',
 	port: 443,
 	method: 'GET',
-	timeout: 5000,
+	timeout: 60000,
 	headers: {
 		'accept': 'application/zip'
 	}
@@ -24,7 +29,7 @@ const opts = {
  * Data Files - in case the download is corrupted use a backup
  */
 const DATA_FILE = './covid_data/data.file';
-const DATA_BAC_FILE = './covid_data/data.file.bac'
+const DATA_TMP_FILE = './covid_data/data.file.tmp'
 
 /**
  * Number of retries
@@ -37,7 +42,7 @@ let currentRetries = 0;
  */
 const makeRequest = () => {
 	return new Promise((resolve, reject) => {
-		const writeFileStream = fs.createWriteStream(DATA_BAC_FILE);
+		const writeFileStream = fs.createWriteStream(DATA_TMP_FILE);
 		const request = https.request(opts, (reponse) => {
 			if (reponse.statusCode >= 200 && reponse.statusCode <= 299) {
 				reponse.pipe(writeFileStream);
@@ -61,20 +66,25 @@ const makeRequest = () => {
 		});
 
 		// Stream Events
-		writeFileStream.on('finish', function () {
-			fs.stat(DATA_FILE, (err, stats) => {
-				if (err) { // 
-					resolve(true);
+		writeFileStream.on('finish', () => {
+			fs.readFile(DATA_TMP_FILE, async (err, data) => {
+				if (err) {
+					console.log(err)
+					reject(err)
 				}
-				else {
-					fs.stat(DATA_BAC_FILE, (err, bacStats) => {
-						if (stats.size <= bacStats.size) {
-							resolve(true);
-						}
-						else {
-							reject('Corrupted file')
-						}
+				try {
+					await new JSZip().loadAsync(data);
+					fs.stat(DATA_TMP_FILE, (err, bacStats) => {
+						console.log(`Valid Backup file of size = ${bacStats.size}`)
+						resolve(true);
 					});
+				}
+				catch (e) {
+					fs.stat(DATA_TMP_FILE, (err, bacStats) => {
+						console.log(`Corrupted file of size = ${bacStats.size}`)
+						console.log(e)
+					})
+					reject(e)
 				}
 			});
 		});
@@ -93,14 +103,12 @@ const getData = () => {
 			console.log('Requesting Data...')
 			await makeRequest()
 			const writeFileStream = fs.createWriteStream(DATA_FILE);
-			const readFileStream = fs.createReadStream(DATA_BAC_FILE);
+			const readFileStream = fs.createReadStream(DATA_TMP_FILE);
 			readFileStream.pipe(writeFileStream);
 
 			// All Data should be flushed at this point.
 			writeFileStream.on('finish', () => {
-				fs.stat(DATA_FILE, (err, stats) => {
-					console.log(`New Data File Size ${stats.size}`)
-				});
+				console.log('New Data File ready for use!')
 				resolve(true);
 			})
 			writeFileStream.on('error', (e) => {
@@ -149,7 +157,7 @@ cronJob.start();
  * Routing
  */
 app.get('/covid/api/export', (req, res) => {
-	const readFileStream = fs.createReadStream(DATA_FILE);
+	const readFileStream = fs.createReadStream(DATA_TMP_FILE);
 	readFileStream.pipe(res);
 	readFileStream.on('close', () => {
 		res.end();
@@ -169,5 +177,5 @@ fs.stat(DATA_FILE, (err, stats) => {
  * Start Application
  */
 app.listen(PORT, () => {
-	console.log(`Server listeing on ${PORT}`)
+	console.log(`Server listening on ${PORT}`)
 });
