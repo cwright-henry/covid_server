@@ -10,6 +10,7 @@
     "build": "node ./src/app.js"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "cron": "^1.8.2",
     "express": "^4.17.1",
     "jszip": "^3.5.0"
