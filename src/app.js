@@ -1,14 +1,19 @@
 const fs = require('fs');
 const express = require('express');
 const CronJob = require('cron').CronJob;
-const app = express()
+const helmet = require("helmet");
 const { getCovidVaccineData, CovidVaccineFileName } = require('./jobs/covid-vacine-data')
 const { getCovidData, CovidDataFileName } = require('./jobs/covid-data')
 
 /**
- * Port to rum on
+ * Lets get ready to rumble!
  */
 const PORT = 3000;
+const app = express()
+app.use(helmet());
+app.use(helmet.hidePoweredBy());
+app.disable('x-powered-by');
+
 
 /**
  * Cron Jobs - Covid Data every hour

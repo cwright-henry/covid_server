@@ -58,8 +58,44 @@ const makeRequest = (options) => {
     });
 }
 
-function parseHtmlAndSave(data, options) {
+function checkAndMarkUpdates(json, options) {
     return new Promise((resolve, reject) => {
+        fs.readFile(options.file, 'utf8', function (err, data) {
+            if (err) {
+                // file does not exist so set last updated on all items
+                for (const item of json) {
+                    item.updated = Date.now()
+                }
+                resolve()
+                return;
+            }
+
+            try {
+                const prevJSON = JSON.parse(data);
+                for (const item of json) {
+                    const prevEntry = prevJSON.find(prevItem => prevItem.vaccine === item.vaccine)
+                    if (prevEntry) {
+                        // Check against entry file
+                        if (prevEntry.entry !== item.entry) {
+                            item.updated = Date.now()
+                        }
+                    }
+                    // New item so add now as last update
+                    else {
+                        item.updated = Date.now()
+                    }
+                }
+                resolve()
+            }
+            catch (e) {
+                reject(e)
+            }
+        });
+    });
+}
+
+function parseHtmlAndSave(data, options) {
+    return new Promise(async (resolve, reject) => {
         try {
             const $ = cheerio.load(data);
             const json = [];
@@ -113,6 +149,8 @@ function parseHtmlAndSave(data, options) {
             $('#vaccine_Unknown .chart_row').each(function () {
                 json.push(parseRow(this, 'other'))
             });
+
+            await checkAndMarkUpdates(json, options)
 
             fs.writeFile(options.file, JSON.stringify(json), function (err) {
                 if (err) {
