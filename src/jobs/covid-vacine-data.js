@@ -79,6 +79,9 @@ function checkAndMarkUpdates(json, options) {
                         if (prevEntry.entry !== item.entry) {
                             item.updated = Date.now()
                         }
+                        else {
+                            item.updated = prevEntry.updated;
+                        }
                     }
                     // New item so add now as last update
                     else {
