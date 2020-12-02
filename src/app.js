@@ -46,6 +46,7 @@ app.get('/covid/api/covid-data', (req, res) => {
 
 app.get('/covid/api/covid-vaccine-data', (req, res) => {
 	const readFileStream = fs.createReadStream(CovidVaccineFileName);
+	res.setHeader('Content-Type', 'application/json');
 	readFileStream.pipe(res);
 	readFileStream.on('close', () => {
 		res.end();
