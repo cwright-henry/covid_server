@@ -24,6 +24,7 @@ const COVID_DATA_FILE = {
         }
     },
     file: './covid_data/covid_data.zip',
+    backupFile: './covid_data/covid_data_backup.zip', // Temporary solution till we get a valid file
     tempFile: './covid_data/covid_data.zip.tmp',
     name: 'Covid Data',
     retries: 0
@@ -137,5 +138,5 @@ const getCovidData = async () => {
 
 module.exports = {
     getCovidData,
-    CovidDataFileName: COVID_DATA_FILE.file
+    CovidDataFileName: COVID_DATA_FILE.backupFile
 }

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const JSZip = require('jszip')
 const https = require('https');
 
 /**
@@ -65,7 +64,7 @@ const makeRequest = (options) => {
                     resolve(true)
                 }
                 else {
-                    reject(err)
+                    reject(`Unexpected file size. Expected ${options.expectedFileSize} but got ${stats.size}`)
                 }
             });
         });
