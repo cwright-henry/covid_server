@@ -6,7 +6,7 @@
   "author": "cwright",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./src/app.js",
+    "start": "nodemon --ignore './covid_data/' ./src/app.js",
     "build": "node ./src/app.js"
   },
   "dependencies": {
@@ -14,7 +14,9 @@
     "cron": "^1.8.2",
     "express": "^4.17.1",
     "helmet": "^4.1.1",
-    "jszip": "^3.5.0"
+    "jszip": "^3.5.0",
+    "split2": "^3.2.2",
+    "through2": "^4.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

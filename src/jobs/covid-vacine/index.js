@@ -194,7 +194,13 @@ const getCovidVaccineData = async () => {
     }
 }
 
+fs.access(COVID_VACINE_FILE.file, fs.F_OK, (err) => {
+    if (err) {
+        getCovidVaccineData()
+    }
+})
+
 module.exports = {
     getCovidVaccineData,
-    CovidVaccineFileName: COVID_VACINE_FILE.file
+    VACCINE_FILE: COVID_VACINE_FILE.file
 }

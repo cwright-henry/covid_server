@@ -60,7 +60,7 @@ const makeRequest = (options) => {
                     console.log(`${options.name}: Unable to read tmp file`, err)
                     return reject(err)
                 }
-                if(stats.size > options.expectedFileSize) {
+                if (stats.size > options.expectedFileSize) {
                     resolve(true)
                 }
                 else {
@@ -77,7 +77,7 @@ const makeRequest = (options) => {
 /**
  * Copy contents to actual file
  */
-const getData = (options) => {
+const copyData = (options) => {
     return new Promise(async (resolve, reject) => {
         try {
             console.log(`${options.name}: Requesting Data...`)
@@ -112,7 +112,7 @@ const getData = (options) => {
 const getCovidData = async () => {
     try {
         ++COVID_DATA_FILE.retries;
-        await getData(COVID_DATA_FILE);
+        await copyData(COVID_DATA_FILE);
         COVID_DATA_FILE.retries = 0;
     }
     catch (e) {
@@ -128,7 +128,13 @@ const getCovidData = async () => {
     }
 }
 
+fs.access(COVID_DATA_FILE.file, fs.F_OK, (err) => {
+    if (err) {
+        getCovidData()
+    }
+})
+
 module.exports = {
     getIrelandCovidData: getCovidData,
-    CovidIrelandDataFileName: COVID_DATA_FILE.file
+    IRELAND_COVID_FILE: COVID_DATA_FILE.file
 }
