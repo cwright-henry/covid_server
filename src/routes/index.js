@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const { COVID_VACCINTAION_FILE } = require('../jobs/covid-vaccines-distribution')
 const { IRELAND_COVID_FILE } = require('../jobs/ireland-covid-data')
 const { VACCINE_FILE } = require('../jobs/covid-vacine')
 const { GLOBAL_CONFIRMED_COVID_FILE,
@@ -72,6 +73,18 @@ module.exports = (app) => {
 	 */
 	app.get('/covid/api/covid-ireland-data', (req, res) => {
 		const readFileStream = fs.createReadStream(IRELAND_COVID_FILE);
+		res.setHeader('Content-Type', 'application/json');
+		readFileStream.pipe(res);
+		readFileStream.on('close', () => {
+			res.end();
+		});
+	});
+
+	/**
+	 * WORLD COVID VACCINATION DATA
+	 */
+	 app.get('/covid/api/covid-vaccinations-data', (req, res) => {
+		const readFileStream = fs.createReadStream(COVID_VACCINTAION_FILE);
 		res.setHeader('Content-Type', 'application/json');
 		readFileStream.pipe(res);
 		readFileStream.on('close', () => {

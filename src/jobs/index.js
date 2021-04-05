@@ -1,4 +1,5 @@
 const CronJob = require('cron').CronJob;
+const { getCovidVaccinationData } = require('./covid-vaccines-distribution') 
 const { getIrelandCovidData } = require('./ireland-covid-data') 
 const { getCovidVaccineData } = require('./covid-vacine')
 const { getAll } = require('./covid-data')
@@ -33,3 +34,12 @@ const covidIrelandDataJob = new CronJob('0 */2 * * *', function () {
 	getIrelandCovidData();
 }, null, true, 'UTC');
 covidIrelandDataJob.start();
+
+/**
+ * Cron Jobs - Covid Vaccination Data once a day at mid-night.
+ */
+ const covidVaccinationJob = new CronJob('0 0 * * *', function () {
+	console.log(`Running covid vaccination data cron at ${new Date()}`)
+	getCovidVaccinationData();
+}, null, true, 'UTC');
+covidVaccinationJob.start();
