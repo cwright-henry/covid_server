@@ -38,7 +38,7 @@ covidIrelandDataJob.start();
 /**
  * Cron Jobs - Covid Vaccination Data every six hours.
  */
-const covidVaccinationJob = new CronJob('0 */6 * * *', function () {
+const covidVaccinationJob = new CronJob('0 */2 * * *', function () {
 	console.log(`Running covid vaccination data cron at ${new Date()}`)
 	getCovidVaccinationData();
 }, null, true, 'UTC');
