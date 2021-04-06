@@ -1,11 +1,11 @@
 const CronJob = require('cron').CronJob;
-const { getCovidVaccinationData } = require('./covid-vaccines-distribution') 
-const { getIrelandCovidData } = require('./ireland-covid-data') 
+const { getCovidVaccinationData, getCovidVaccinationLocationData } = require('./covid-vaccines-distribution')
+const { getIrelandCovidData } = require('./ireland-covid-data')
 const { getCovidVaccineData } = require('./covid-vacine')
 const { getAll } = require('./covid-data')
 
 /**
- * Cron Jobs - Covid Data every hour on the hour
+ * Cron Jobs - Covid Data every hour
  * 
  * Check out source, 'Once a day around 23:59 (UTC)':-
  * https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
@@ -36,10 +36,19 @@ const covidIrelandDataJob = new CronJob('0 */2 * * *', function () {
 covidIrelandDataJob.start();
 
 /**
- * Cron Jobs - Covid Vaccination Data once a day at mid-night.
+ * Cron Jobs - Covid Vaccination Data every six hours.
  */
- const covidVaccinationJob = new CronJob('0 0 * * *', function () {
+const covidVaccinationJob = new CronJob('0 */6 * * *', function () {
 	console.log(`Running covid vaccination data cron at ${new Date()}`)
 	getCovidVaccinationData();
 }, null, true, 'UTC');
 covidVaccinationJob.start();
+
+/**
+ * Cron Jobs - Covid Vaccination Location Data once a day at mid-night..
+ */
+const covidVaccinationLocationJob = new CronJob('0 0 * * *', function () {
+	console.log(`Running covid vaccination location data cron at ${new Date()}`)
+	getCovidVaccinationLocationData();
+}, null, true, 'UTC');
+covidVaccinationLocationJob.start();
