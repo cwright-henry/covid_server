@@ -32,6 +32,7 @@ const VACCINE_LOCATIONS = {
 		},
 	},
 	file: './covid_data/vaccineLocations.json',
+	retries: 0,
 	createEntry,
 	parseHeader,
 	displayName: 'Vaccine Locations'
