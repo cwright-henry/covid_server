@@ -3,6 +3,7 @@ const { getCovidVaccinationData, getCovidVaccinationLocationData } = require('./
 const { getIrelandCovidData } = require('./ireland-covid-data')
 const { getCovidVaccineData } = require('./covid-vacine')
 const { getAll } = require('./covid-data')
+const { getCountryData } = require('./country-data')
 
 /**
  * Cron Jobs - Covid Data every hour
@@ -52,3 +53,12 @@ const covidVaccinationLocationJob = new CronJob('0 0 * * *', function () {
 	getCovidVaccinationLocationData();
 }, null, true, 'UTC');
 covidVaccinationLocationJob.start();
+
+/**
+ * Cron Jobs - Country Data once a day at mid-night..
+ */
+const countryDataJob = new CronJob('0 0 * * *', function () {
+	console.log(`Running country data cron at ${new Date()}`)
+	getCountryData();
+}, null, true, 'UTC');
+countryDataJob.start();
