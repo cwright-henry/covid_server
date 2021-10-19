@@ -8,8 +8,8 @@ const MAX_RETRIES = 5;
 
 const COUNTRY_DATA = {
 	request: {
-		host: 'restcountries.eu',
-		path: '/rest/v2/all',
+		host: 'restcountries.com',
+		path: '/v2/all',
 		port: 443,
 		method: 'GET',
 		timeout: 600000, // 10 minute timeout
@@ -22,7 +22,7 @@ const COUNTRY_DATA = {
 	displayName: 'Country List'
 }
 
-const createEntry = ({ name, alpha2Code, alpha3Code, region, subregion, population, latlng, area, borders, flag, regionalBlocs }) => {
+const createEntry = ({ name, alpha2Code, alpha3Code, region, subregion, population, latlng, area, borders = [], flag, regionalBlocs = [] }) => {
 	return {
 		name,
 		alpha2Code,
